@@ -6,7 +6,7 @@ import PlusButton from "../PlusButton";
 interface Props {
   data: PokemonTypes;
   onClickAdd: (data: PokemonTypes) => void;
-  onClickDelete: (data: PokemonTypes) => void;
+  onClickDelete: (alias: string) => void;
   isInBag: boolean;
   alias: string;
 }
@@ -14,7 +14,7 @@ interface Props {
 const Pokemon: FC<Props> = ({ data, onClickAdd, onClickDelete, isInBag, alias }) => {
   return (
     <div className="relative rounded-lg w-full bg-white flex flex-col justify-center items-center p-4">
-      {!isInBag ? <PlusButton onClick={() => onClickAdd(data)} /> : <DeleteButton onClick={() => onClickDelete(data)} />}
+      {!isInBag ? <PlusButton onClick={() => onClickAdd(data)} /> : <DeleteButton onClick={() => onClickDelete(alias)} />}
       {isInBag ? <h1 className="font-bold text-xl">"{alias}"</h1> : null}
       <img src={data.image} alt={data.name} />
       <h1 className="font-bold text-xl">{data.name}</h1>

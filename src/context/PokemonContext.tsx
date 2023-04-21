@@ -9,7 +9,7 @@ interface PokemonContextData {
   bag: PokemonBagTypes[];
   loading: boolean;
   addPokemon: (data: PokemonBagTypes) => void;
-  removePokemon: (id: number) => void;
+  removePokemon: (alias: string) => void;
   setLoading: (bool: boolean) => void;
 }
 
@@ -39,11 +39,11 @@ const PokemonProvider: FC<Props> = ({ children }) => {
     });
   };
 
-  const removePokemon = (id: number) => {
+  const removePokemon = (alias: string) => {
     setBag((prev) => {
       const arr: any = [];
       prev.map((item) => {
-        if (item.id !== id) {
+        if (item.alias !== alias) {
           arr.push(item);
         }
       });
