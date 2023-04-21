@@ -1,15 +1,33 @@
 import React from "react";
 import Pokeball from "../../assets/Pokeball.webp";
 import Bag from "../../assets/Bag.png";
+import { useNavigate } from "react-router-dom";
+import {GiSchoolBag} from "react-icons/gi"
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const handleClickTitle = () => {
+    navigate("/");
+  };
+
+  const handleClickBag = () => {
+    navigate("/bag");
+  };
+
   return (
     <div className="h-20 bg-yellow-500 flex justify-between items-center px-8">
-      <h1 className="text-2xl font-bold flex justify-center items-center">
+      <h1
+        onClick={handleClickTitle}
+        className="text-2xl font-bold flex justify-center items-center hover:text-red-500 duration-200 cursor-pointer"
+      >
         <img className="w-10 mr-2" src={Pokeball} alt="Pokeball" /> Pokemon
       </h1>
-      <div className="cursor-pointer p-2 w-16 flex justify-center items-center hover:bg-gray-400 rounded-full">
-        <img src={Bag} alt="Bag" />
+      <div
+        onClick={handleClickBag}
+        className="cursor-pointer p-2 w-16 flex justify-center items-center hover:bg-yellow-300 duration-200 rounded-full"
+      >
+        <GiSchoolBag size={50} />
       </div>
     </div>
   );

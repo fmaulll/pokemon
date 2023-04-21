@@ -1,4 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
+import ModalLoader from "../components/ModalLoader";
+import { PokemonContext } from "../context/PokemonContext";
 import Header from "./Header";
 
 interface Props {
@@ -6,10 +8,14 @@ interface Props {
 }
 
 const Layout: FC<Props> = ({ children }) => {
-  return <div className="min-h-screen bg-gray-800">
-    <Header />
-    {children}
-  </div>;
+  const { loading } = useContext(PokemonContext);
+  return (
+    <div className="min-h-screen bg-gray-800">
+      <Header />
+      <div className="px-8 py-4">{children}</div>
+      {loading ? <ModalLoader /> : null}
+    </div>
+  );
 };
 
 export default Layout;
