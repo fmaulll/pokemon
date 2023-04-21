@@ -1,5 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Dialog from "../../components/Dialog";
+import Pokemon from "../../components/Pokemon";
+import { PokemonContext } from "../../context/PokemonContext";
 import { PokemonTypes } from "../../type";
 
 type AllPokemonType = {
@@ -8,7 +12,18 @@ type AllPokemonType = {
 };
 
 const Home = () => {
+  const { addPokemon, setLoading, removePokemon } = useContext(PokemonContext);
+  const navigate = useNavigate()
   const [allPokemon, setAllPokemon] = useState<PokemonTypes[]>([]);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [chosenPokemon, setChosenPokemon] = useState<PokemonTypes>({
+    name: "",
+    height: 0,
+    id: 0,
+    image: "",
+    types: "",
+    weight: 0,
+  });
 
   const getPokemon = async (pokemon: AllPokemonType) => {
     try {
@@ -19,7 +34,9 @@ const Home = () => {
           return [
             ...prev,
             {
-              name: data.name,
+              name:
+                data.name[0].toUpperCase() +
+                data.name.slice(1, data.name.length),
               image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${data.id}.png`,
               height: data.height,
               weight: data.weight,
@@ -28,6 +45,7 @@ const Home = () => {
             },
           ];
         });
+        setLoading(false)
       }
     } catch (error) {
       alert(error);
@@ -35,6 +53,7 @@ const Home = () => {
   };
 
   const getAllPokemon = async () => {
+    setLoading(true)
     try {
       const result = await axios.get(
         "https://pokeapi.co/api/v2/pokemon?limit=300"
@@ -49,14 +68,42 @@ const Home = () => {
       alert(error);
     }
   };
+
+  const handleClickAddPokemon = (data: PokemonTypes) => {
+    setChosenPokemon(data);
+    handleOpenDialog();
+    // addPokemon({ ...data, alias: "" });
+  };
+
+  const handleAddPokemon = (data: PokemonTypes, alias: string) => {
+    if (!alias) {
+      return;
+    }
+    addPokemon({ ...data, alias });
+    navigate("/bag")
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(!openDialog);
+  };
+
   useEffect(() => {
     getAllPokemon();
   }, []);
-  return <div className="grid grid-cols-6 gap-4">
-    {allPokemon.map((item, index)=> (
-      <div>{item.name}</div>
-    ))}
-  </div>;
+  return (
+    <div className="grid grid-cols-6 gap-4">
+      {allPokemon.map((item, index) => (
+        <Pokemon alias="" isInBag={false} data={item} key={index} onClickAdd={handleClickAddPokemon} onClickDelete={() => {}} />
+      ))}
+      {openDialog ? (
+        <Dialog
+          data={chosenPokemon}
+          handleAddPokemon={handleAddPokemon}
+          onClose={handleOpenDialog}
+        />
+      ) : null}
+    </div>
+  );
 };
 
 export default Home;
