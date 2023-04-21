@@ -15,3 +15,13 @@ export type PokemonBagTypes = {
     height: number,
     types: string
 }
+
+export type PokemonTypeList = {
+  name: string;
+  url: string;
+};
+
+export type FilterTypes = {
+    name: string;
+    type: string;
+  };

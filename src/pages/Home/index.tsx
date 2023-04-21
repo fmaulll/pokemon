@@ -1,10 +1,11 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Dialog from "../../components/Dialog";
+import Filter from "../../components/Filter";
 import Pokemon from "../../components/Pokemon";
 import { PokemonContext } from "../../context/PokemonContext";
-import { PokemonTypes } from "../../type";
+import { FilterTypes, PokemonTypeList, PokemonTypes } from "../../type";
 
 type AllPokemonType = {
   name: string;
@@ -13,7 +14,7 @@ type AllPokemonType = {
 
 const Home = () => {
   const { addPokemon, setLoading, removePokemon } = useContext(PokemonContext);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [allPokemon, setAllPokemon] = useState<PokemonTypes[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [chosenPokemon, setChosenPokemon] = useState<PokemonTypes>({
@@ -23,6 +24,11 @@ const Home = () => {
     image: "",
     types: "",
     weight: 0,
+  });
+  const [typeList, setTypeList] = useState<PokemonTypeList[]>([]);
+  const [filter, setFilter] = useState<FilterTypes>({
+    name: "",
+    type: "",
   });
 
   const getPokemon = async (pokemon: AllPokemonType) => {
@@ -45,7 +51,7 @@ const Home = () => {
             },
           ];
         });
-        setLoading(false)
+        setLoading(false);
       }
     } catch (error) {
       alert(error);
@@ -53,7 +59,7 @@ const Home = () => {
   };
 
   const getAllPokemon = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const result = await axios.get(
         "https://pokeapi.co/api/v2/pokemon?limit=300"
@@ -63,6 +69,19 @@ const Home = () => {
         results.map((item: AllPokemonType, index: number) => {
           getPokemon(item);
         });
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const getAllPokemonType = async () => {
+    setLoading(true);
+    try {
+      const result = await axios.get("https://pokeapi.co/api/v2/type");
+      if (result.status === 200) {
+        const { results } = result.data;
+        setTypeList(results);
       }
     } catch (error) {
       alert(error);
@@ -80,29 +99,60 @@ const Home = () => {
       return;
     }
     addPokemon({ ...data, alias });
-    navigate("/pokemon/bag")
+    navigate("/pokemon/bag");
   };
 
   const handleOpenDialog = () => {
     setOpenDialog(!openDialog);
   };
 
+  const handleChangeFilter = (filter: FilterTypes) => {
+    setFilter(filter)
+  };
+
+  const handleResetFilter = () => {
+    setFilter({
+      name: "",
+      type: "",
+    });
+  };
+
   useEffect(() => {
     getAllPokemon();
+    getAllPokemonType();
   }, []);
   return (
-    <div className="grid grid-cols-6 gap-4">
-      {allPokemon.map((item, index) => (
-        <Pokemon alias="" isInBag={false} data={item} key={index} onClickAdd={handleClickAddPokemon} onClickDelete={() => {}} />
-      ))}
-      {openDialog ? (
-        <Dialog
-          data={chosenPokemon}
-          handleAddPokemon={handleAddPokemon}
-          onClose={handleOpenDialog}
-        />
-      ) : null}
-    </div>
+    <Fragment>
+      <Filter
+        typeList={typeList}
+        onSubmitFilter={handleChangeFilter}
+        onResetFilter={handleResetFilter}
+      />
+      <div className="grid grid-cols-6 gap-4">
+        {allPokemon
+          .filter((pokemon) => pokemon.name.toLowerCase().includes(filter.name))
+          .filter((pokemon) =>
+            pokemon.types.toLowerCase().includes(filter.type)
+          )
+          .map((item, index) => (
+            <Pokemon
+              alias=""
+              isInBag={false}
+              data={item}
+              key={index}
+              onClickAdd={handleClickAddPokemon}
+              onClickDelete={() => {}}
+            />
+          ))}
+        {openDialog ? (
+          <Dialog
+            data={chosenPokemon}
+            handleAddPokemon={handleAddPokemon}
+            onClose={handleOpenDialog}
+          />
+        ) : null}
+      </div>
+    </Fragment>
   );
 };
 
