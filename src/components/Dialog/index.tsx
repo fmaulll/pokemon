@@ -51,20 +51,19 @@ const Dialog: FC<Props> = ({ data, handleAddPokemon, onClose }) => {
               Give an alias for <span className="font-bold">{data?.name}</span>
             </h1>
           </div>
-          <input
-            ref={inputRef}
-            value={alias}
-            onChange={handleChangeAlias}
-            className="w-full p-4 border rounded-lg text-2xl mt-4"
-            placeholder="Type an alias"
-            type="text"
-          />
-          <button
-            onClick={() => handleAddPokemon(data, alias)}
-            className="w-full p-4 rounded-lg bg-yellow-500 font-bold mt-4"
-          >
-            Submit
-          </button>
+          <form onSubmit={() => handleAddPokemon(data, alias)}>
+            <input
+              ref={inputRef}
+              value={alias}
+              onChange={handleChangeAlias}
+              className="w-full p-4 border rounded-lg text-2xl mt-4"
+              placeholder="Type an alias"
+              type="text"
+            />
+            <button className="w-full p-4 rounded-lg bg-yellow-500 font-bold mt-4">
+              Submit
+            </button>
+          </form>
         </div>
       </OutsideWrapper>
     </div>
