@@ -80,7 +80,7 @@ const Home = () => {
       return;
     }
     addPokemon({ ...data, alias });
-    navigate("/bag")
+    navigate("/pokemon/bag")
   };
 
   const handleOpenDialog = () => {

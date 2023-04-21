@@ -8,11 +8,11 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleClickTitle = () => {
-    navigate("/");
+    navigate("/pokemon/");
   };
 
   const handleClickBag = () => {
-    navigate("/bag");
+    navigate("/pokemon/bag");
   };
 
   return (
