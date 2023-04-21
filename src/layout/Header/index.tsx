@@ -1,6 +1,5 @@
 import React from "react";
 import Pokeball from "../../assets/Pokeball.webp";
-import Bag from "../../assets/Bag.png";
 import { useNavigate } from "react-router-dom";
 import {GiSchoolBag} from "react-icons/gi"
 
